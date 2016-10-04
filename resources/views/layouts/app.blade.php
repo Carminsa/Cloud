@@ -8,10 +8,13 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    {{--<title>{{ config('app.name', 'Laravel') }}</title>--}}
+    <title>Feu Cloud</title>
 
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/dropzone.css">
+    <link rel="stylesheet" href="/css/style.css">
 
     <!-- Scripts -->
     <script>
@@ -19,6 +22,8 @@
             'csrfToken' => csrf_token(),
         ]); ?>
     </script>
+    <script src="js/dropzone.js"></script>
+
 </head>
 <body>
     <nav class="navbar navbar-default navbar-static-top">
@@ -35,7 +40,8 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                    Feu Cloud
+{{--                    {{ config('app.name', 'Laravel') }}--}}
                 </a>
             </div>
 
@@ -49,9 +55,28 @@
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Authentication Links -->
                     @if (Auth::guest())
-                        <li><a href="{{ url('/login') }}">Login</a></li>
-                        <li><a href="{{ url('/register') }}">Register</a></li>
+                        <li><a href="{{ url('/login') }}">Connexion</a></li>
+                        <li><a href="{{ url('/register') }}">Inscription</a></li>
                     @else
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                               Uploads <span class="caret"></span>
+                            </a>
+
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="{{ url('/uploads' ) }}"
+                                       onclick="event.preventDefault();
+                                                 document.getElementById('show-form').submit();">
+                                        Mes Uploads
+                                    </a>
+
+                                    <form id="show-form" action="{{ url('/uploads') }}" method="get" style="display: none;">
+                                        {{ csrf_field() }}
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 {{ Auth::user()->username }} <span class="caret"></span>

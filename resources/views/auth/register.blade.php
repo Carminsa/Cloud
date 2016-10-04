@@ -5,13 +5,13 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Register</div>
+                <div class="panel-heading">Nous Rejoindre</div>
                 <div class="panel-body">
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/register') }}">
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
-                            <label for="username" class="col-md-4 control-label">Username</label>
+                            <label for="username" class="col-md-4 control-label">Nom d'utilisateur</label>
 
                             <div class="col-md-6">
                                 <input id="username" type="text" class="form-control" name="username" value="{{ old('username') }}" required autofocus>
@@ -89,6 +89,20 @@
                                 @if ($errors->has('lastname'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('lastname') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group{{ $errors->has('birthdate') ? ' has-error' : '' }}">
+                            <label for="birthdate" class="col-md-4 control-label">Date de Naissance</label>
+
+                            <div class="col-md-6">
+                                <input id="birthdate" type="date" class="form-control" name="birthdate"  value="{{ old('birthdate') }}" required>
+
+                                @if ($errors->has('birthdate'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('birthdate') }}</strong>
                                     </span>
                                 @endif
                             </div>

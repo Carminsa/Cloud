@@ -1,0 +1,23 @@
+.my_uploads{
+    text-align: center;
+    font-size:30px;
+}
+
+.upload_size{
+    font-size: 15px;
+}
+
+.upload_date{
+    font-size: 15px;
+}
+
+.label_size{
+    font-size: 12px;
+    text-decoration: underline;
+}
+
+.size{
+    text-align: right;
+    margin-right: 15px;
+}
+
