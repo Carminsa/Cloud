@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 use Session;
 use App\Http\Requests;
 
@@ -30,7 +31,8 @@ class UploadsController extends Controller
     {
         $query = DB::table('uploads')
             ->where('user_id', '=', Auth::user()->id)
-            ->get();
+            ->paginate(10);
+//            ->get();
 
         return view('uploads/index', ['upload' => $query]);
     }
@@ -58,25 +60,73 @@ class UploadsController extends Controller
 
     }
 
-
     public function edit($id)
     {
         $query = DB::table('uploads')
             ->where('id_upload','=' , $id)
-            ->get();
+            ->first();
 
-        return view('uploads/edit', ['upload' => $query]);
+        if ($query->user_id != Auth::user()->id)
+        {
+            Session::flash('error', 'Bien essayé Florent !');
+            return redirect()->action('HomeController@index');
+        }else {
+            return view('uploads/edit', ['uploads' => $query]);
+        }
     }
 
     public function update(Request $request, $id)
     {
-        //
+        $unique_name = DB::table('uploads')
+            ->select('name')
+            ->where('user_id', '=' , Auth::user()->id)
+            ->where('name', '=', $request->input('name'))
+            ->get();
+
+
+        $rules = array(
+            'name'       => 'min:3',
+        );
+
+        $query = DB::table('uploads')
+            ->where('id_upload', '=', $id);
+
+        $validator = Validator::make(Input::all(), $rules);
+
+        if ($validator->fails()) {
+            return Redirect::to('uploads/' . $id . '/edit')
+                ->withErrors($validator);
+        }
+        else if (count($unique_name) > 0 ){
+            Session::flash('error', 'Un fichier du même nom existe déjà, merci de choisir un autre nom');
+            return Redirect::to('uploads/' . $id . '/edit');
+        }
+        else {
+            if ($request->input('name') !== ""){
+                $query = $query->update([
+                    'name' => $request->input('name'),
+                    'private' => $request->input('status')
+                ]);
+            }else{
+                $query = $query->update([
+                    'private' => $request->input('status')
+                ]);
+            }
+
+            Session::flash('message', 'Mise à jour effectuée');
+            return Redirect::to('uploads/' . $id . '/edit');
+        }
     }
 
 
     public function destroy($id)
     {
-        //
+        DB::table('uploads')
+            ->where('id_upload', '=' , $id)
+            ->delete();
+
+        Session::flash('message', 'Fichier Supprimé)');
+        return redirect()->action('UploadsController@index');
     }
 
     public function upload()
@@ -89,7 +139,8 @@ class UploadsController extends Controller
             ->where('name', '=', $this->file_name)
             ->get();
 
-        if (count($query) > 0) {
+        if (count($query) > 0)
+        {
             Session::flash('error', 'Un fichier du même nom existe déjà');
             return redirect()->action('HomeController@index');
         }else{

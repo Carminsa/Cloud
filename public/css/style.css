@@ -21,3 +21,7 @@
     margin-right: 15px;
 }
 
+.paginate{
+    position: fixed;
+    top:600px;
+}

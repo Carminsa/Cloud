@@ -23,6 +23,7 @@
                     <th scope="row">Nom</th>
                     <th class="spacing" scope="row">Taille</th>
                     <th scope="row">Path</th>
+                    <th scope="row">Public</th>
                     <th scope="row">Type</th>
                     <th scope="row">Date</th>
                     <th scope="row">Action</th>
@@ -30,22 +31,27 @@
                 </thead>
                 <tbody>
                 <?php $i = 1; ?>
-                <?php foreach ($upload as $uploads){ ?>
-                <tr>
-                    <td><?= htmlspecialchars($i++) ?></td>
-                    <td><?= htmlspecialchars($uploads->name); ?></td>
-                    <td><?= htmlspecialchars($uploads->size); ?> <span>Ko</span> </td>
-                    <td class="spacing"><?= htmlspecialchars($uploads->path); ?></td>
-                    <td><?= htmlspecialchars($uploads->mime); ?></td>
-                    <td><?= htmlspecialchars($uploads->date); ?></td>
-                    <td class="actions">
-                        <a href="{{ url('/uploads/' . $uploads->id_upload . '/edit') }}">Modifier</a>
-                        <a href="">Voir</a>
-                    </td>
-                </tr>
-                <?php } ?>
+                @foreach($upload as $uploads)
+                    <tr>
+                        <td><?= htmlspecialchars($i++) ?></td>
+                        <td><?= htmlspecialchars($uploads->name); ?></td>
+                        <td><?= htmlspecialchars($uploads->size); ?> <span>Ko</span> </td>
+                        <td class="spacing"><?= htmlspecialchars($uploads->path); ?></td>
+                        <td><?php if ( $uploads->private == 0 ){echo "Non"; } else { echo "Oui"; } ?></td>
+                        <td><?= htmlspecialchars($uploads->mime); ?></td>
+                        <td><?= htmlspecialchars($uploads->date); ?></td>
+                        <td class="actions">
+                            <a href="{{ url('/uploads/' . $uploads->id_upload . '/edit') }}">Modifier</a>
+                            <a href="">Voir</a>
+                        </td>
+                    </tr>
+                @endforeach
+
                 </tbody>
             </table>
+        </div>
+        <div class="col-md-offset-4 col-md-5 paginate">
+            {{ $upload->links() }}
         </div>
     </div>
 @endsection

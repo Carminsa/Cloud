@@ -5,7 +5,6 @@
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
-                    <?php foreach ($upload as $uploads){ ?>
                     <h3 class=" panel-heading">
                         <div class="col-md-offset-5"><?= htmlspecialchars($uploads->name) ?></div>
                     </h3>
@@ -16,14 +15,22 @@
                                 <p> {!! \Session::get('message') !!}</p>
                             </div>
                         @endif
-                        <form class="form-horizontal" role="form"  action="{{ url('/users/' . Auth::user()->id) }}" method="POST">
+                        @if(\Session::get('error'))
+                            <div class="alert alert-danger fade-in">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <p> {!! \Session::get('error') !!}</p>
+                            </div>
+                        @endif
+
+                        <form class="form-horizontal" role="form"  action="{{ url('/uploads/' . $uploads->id_upload) }}" method="POST">
                             {{ csrf_field() }}
                             <input type="hidden" name="_method" value="put" />
+
                             <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                                 <label for="name" class="col-md-4 control-label"></label>
 
                                 <div class="col-md-6">
-                                    <input id="name" type="text" class="form-control" name="name" placeholder="<?= htmlspecialchars($uploads->name) ?>" required autofocus>
+                                    <input id="name" type="text" class="form-control" name="name" placeholder="Changer le nom de votre fichier">
 
 
                                     @if ($errors->has('name'))
@@ -34,43 +41,37 @@
                                 </div>
                             </div>
 
-                            <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                                <label for="email" class="col-md-4 control-label"></label>
+                            <div class="form-group{{ $errors->has('status') ? ' has-error' : '' }}">
+                                <label for="status" class="col-md-4 control-label"></label>
 
                                 <div class="col-md-6">
-                                    <input id="email" type="email" class="form-control" name="email" placeholder="">
+                                    <select class="form-control" name="status" id="status">
+                                        <option value="0" <?php if ($uploads->private == 0 ) { ?> selected <?php } ?>>Privée</option>
+                                        <option value="1"  <?php if ($uploads->private == 1 ) { ?> selected <?php } ?>>Public</option>
+                                    </select>
 
-                                    @if ($errors->has('email'))
+                                    @if ($errors->has('status'))
                                         <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
+                                        <strong>{{ $errors->first('status') }}</strong>
                                     </span>
                                     @endif
                                 </div>
                             </div>
-
-                            <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                                <label for="password" class="col-md-4 control-label">Password</label>
-
-                                <div class="col-md-6">
-                                    <input id="password" type="password" class="form-control" name="password" placeholder="******" >
-
-                                    @if ($errors->has('password'))
-                                        <span class="help-block">
-                                    <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="col-md-5 col-md-push-4">
+                            <div class="col-md-12">
+                                <div class="col-md-12 col-md-push-9">
                                     <button type="submit" class="btn btn-primary">
                                         Modifier
                                     </button>
                                 </div>
-                                <?php } ?>
                             </div>
                         </form>
+                        <div class="">
+                            <form id="uploads_delete" action="{{ url('/uploads/' . $uploads->id_upload) }}}" method="POST">
+                                {{ csrf_field() }}
+                                {{ method_field('DELETE') }}
+                                <input type="submit" value="Supprimer" class="btn btn-danger">
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
