@@ -6,17 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Input;
+
 use App\Http\Requests;
+use Session;
 
 class AdminController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-
     public function index()
     {
         $query = DB::table('users')
@@ -32,33 +29,57 @@ class AdminController extends Controller
         return view('admin/index', ['user' => $query, 'upload' => $req]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function update_user(Request $request ,$id)
     {
-        //
+
+        $rules = array(
+            'username' => 'max:255|min:3|unique:users',
+            'email' => 'email|max:255|unique:users',
+            'firstname' => 'max:255',
+            'lastname' => 'max:255',
+            'birthdate' => 'max:255',
+        );
+
+        $validator = Validator::make(Input::all(), $rules);
+
+        if ($validator->fails()) {
+            return Redirect::to('admin/' . $id . '/edit')
+                ->withErrors($validator);
+        }else
+            {
+            $query = DB::table('users')->where('id', '=', $id);
+
+            if (!empty($request->input('username'))) {
+                $query = $query->update(['username' => $request->input('username'), 'active' => $request->input('active')]);
+            }
+
+            if (!empty($request->input('email'))) {
+                $query = $query->update(['email' => $request->input('email'),'active' => $request->input('active')]);
+            }
+
+            if (!empty($request->input('birthdate'))) {
+                $query = $query->update(['birthdate' => $request->input('birthdate'), 'active' => $request->input('active')]);
+            }
+
+            if (!empty($request->input('lastname'))) {
+                $query = $query->update(['lastname' => $request->input('lastname'), 'active' => $request->input('active')]);
+            }
+
+            if (!empty($request->input('firstname'))) {
+                $query = $query->update(['firstname' => $request->input('firstname'), 'active' => $request->input('active')]);
+            }
+
+
+            Session::flash('message', 'Modification Terminée');
+            return Redirect::to('admin/' . $id . '/edit');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         $query = DB::table('uploads')
@@ -68,24 +89,15 @@ class AdminController extends Controller
         return view('admin/show', ['upload' => $query]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
+        $query = DB::table('users')
+            ->where('id', '=', $id)
+            ->first();
+
+        return view('admin/edit', ['user' => $query]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         DB::table('users')
@@ -95,12 +107,6 @@ class AdminController extends Controller
         return redirect()->action('AdminController@index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         DB::table('users')
@@ -125,7 +131,4 @@ class AdminController extends Controller
 
         return view('admin/files', ['upload' => $query]);
     }
-
-
-
 }

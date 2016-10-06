@@ -16,12 +16,15 @@ class Admin
      */
     public function handle($request, Closure $next)
     {
+        if (!empty(Auth::user())) {
 
-        if (Auth::user()->admin != 1)
-        {
-            return redirect('home');
+            if (Auth::user()->admin != 1) {
+                return redirect('home');
+            }
+            return $next($request);
         }
-        return $next($request);
+        return redirect('home');
+
     }
 
 }

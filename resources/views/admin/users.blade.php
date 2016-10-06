@@ -22,7 +22,7 @@
                 </thead>
                 <tbody>
                 @foreach($user as $users)
-                    <tr>
+                    <tr><?php if ($users->username !== 'root'){ ?>
                         <td><?= htmlspecialchars($users->id) ?></td>
                         <td><?= htmlspecialchars($users->username); ?></td>
                         <td><?= htmlspecialchars($users->firstname); ?></td>
@@ -30,11 +30,34 @@
                         <td><?= htmlspecialchars($users->email); ?></td>
                         <td><?php if ( $users->admin == 0 ){echo "Non"; } else { echo "Oui"; } ?></td>
                         <td><?= htmlspecialchars($users->birthdate); ?></td>
+
                         <td class="actions">
+                            <?php if($users->active == 1){  ?>
+                            <a href="{{ url('/destroy/' . $users->id) }}"
+                               onclick="event.preventDefault();
+                                document.getElementById('destroy.admin').submit();">
+                                <form id="destroy.admin" action="{{ url('/admin/' . $users->id) }}" role="form" method="POST" style="display: none;">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
+                                </form>
+                                Désactiver
+                            </a>
+                            <?php } else { ?>
+                            <a href="{{ url('/update/' . $users->id) }}"
+                               onclick="event.preventDefault();
+                                document.getElementById('enable.admin').submit();">
+                                <form id="enable.admin" action="{{ url('/admin/' . $users->id) }}" role="form" method="POST" style="display: none;">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="_method" value="put" />
+                                </form>
+                                Réactiver
+                            </a>
+                            <?php } ?>
                             <a href="{{ url('/admin/' . $users->id . '/edit') }}">Modifier</a>
-                            <a href="">Voir</a>
+                            <a href="{{ url('/admin/' . $users->id) }}">Voir</a>
                         </td>
                     </tr>
+                    <?php } ?>
                 @endforeach
                 </tbody>
             </table>

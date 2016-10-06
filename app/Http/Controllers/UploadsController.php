@@ -127,10 +127,16 @@ class UploadsController extends Controller
 
     public function destroy($id)
     {
+        $name = DB::table('uploads')
+            ->select('path')
+            ->where('id_upload', '=' , $id)
+            ->first();
+
         DB::table('uploads')
             ->where('id_upload', '=' , $id)
             ->delete();
 
+        unlink($name->path);
         Session::flash('message', 'Fichier Supprimé)');
         return redirect()->action('UploadsController@index');
     }
