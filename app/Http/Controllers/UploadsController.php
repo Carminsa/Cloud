@@ -31,7 +31,7 @@ class UploadsController extends Controller
     {
         $query = DB::table('uploads')
             ->where('private', '=', 1 )
-            ->get();
+            ->paginate(10);
 
         return view('uploads/list_public', ['upload' => $query]);
     }
@@ -147,6 +147,7 @@ class UploadsController extends Controller
 
         $query = DB::table('uploads')
             ->where('name', '=', $this->file_name)
+            ->where('user_id', '=', Auth::user()->id)
             ->get();
 
         if ($size < 52428800) {
@@ -164,6 +165,7 @@ class UploadsController extends Controller
                             'mime' => $this->file_mime,
                             'user_id' => Auth::user()->id
                         ]);
+
                     Session::flash('message', 'Fichier bien uplodé');
 
                 }else {
@@ -173,7 +175,7 @@ class UploadsController extends Controller
                 Session::flash('error', 'Un fichier du même nom existe déjà');
             }
         }else {
-            Session::flash('error', 'Vous avez dépassé votre limite de 50 Mo, merci de supprimer des fichiers pour libérer de l\'espace où passer votre compte en preniums pour 12€ par mois');
+            Session::flash('error', 'Vous avez dépassé votre limite de 50 Mo, merci de supprimer des fichiers pour libérer de l\'espace où passer votre compte en premiums pour 12€ par mois');
         }
     }
 

@@ -16,6 +16,9 @@
             </div>
         @endif
         <div class="row">
+            <div class="paginate">
+                {{ $upload->links() }}
+            </div>
             <table class="table table-striped" cellpadding="0" cellspacing="0">
                 <thead>
                 <tr>
@@ -49,8 +52,6 @@
 
                 </tbody>
             </table>
-        </div>
-        <div class="col-md-offset-4 col-md-5 paginate">
         </div>
     </div>
 @endsection

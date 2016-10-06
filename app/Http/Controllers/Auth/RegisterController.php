@@ -31,13 +31,19 @@ class RegisterController extends Controller
 
     protected function create(array $data)
     {
-        return User::create([
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'firstname' => $data['firstname'],
-            'lastname' => $data['lastname'],
-            'birthdate' => $data['birthdate'],
-            'password' => bcrypt($data['password']),
-        ]);
+        if ($data['username'] == 'users' || $data['username'] == 'files' || $data['username'] == 'user')
+        {
+            echo "impossible d'utiliser ce nom";
+            die;
+        }else{
+            return User::create([
+                'username' => $data['username'],
+                'email' => $data['email'],
+                'firstname' => $data['firstname'],
+                'lastname' => $data['lastname'],
+                'birthdate' => $data['birthdate'],
+                'password' => bcrypt($data['password']),
+            ]);
+        }
     }
 }

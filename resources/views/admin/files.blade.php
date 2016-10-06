@@ -3,18 +3,6 @@
 @section('content')
 
     <div class="container col-md-10 col-md-push-1">
-        @if(\Session::get('message'))
-            <div class="alert alert-success fade-in">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <p> {!! \Session::get('message') !!}</p>
-            </div>
-        @endif
-        @if(\Session::get('error'))
-            <div class="alert alert-warning fade-in">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <p> {!! \Session::get('error') !!}</p>
-            </div>
-        @endif
         <div class="row">
             <div class="paginate">
                 {{ $upload->links() }}
@@ -33,10 +21,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <?php $i = 1; ?>
                 @foreach($upload as $uploads)
                     <tr>
-                        <td><?= htmlspecialchars($i++) ?></td>
+                        <td><?= htmlspecialchars($uploads->id_upload) ?></td>
                         <td><?= htmlspecialchars($uploads->name); ?></td>
                         <td><?= htmlspecialchars($uploads->size); ?> <span>Ko</span> </td>
                         <td class="spacing"><?= htmlspecialchars($uploads->path); ?></td>
@@ -44,14 +31,14 @@
                         <td><?= htmlspecialchars($uploads->mime); ?></td>
                         <td><?= htmlspecialchars($uploads->date); ?></td>
                         <td class="actions">
-                            <a href="{{ url('/uploads/' . $uploads->id_upload . '/edit') }}">Modifier</a>
+                            <a href="{{ url('/admin/' . $uploads->id_upload . '/edit') }}">Modifier</a>
                             <a href="">Voir</a>
                         </td>
                     </tr>
                 @endforeach
-
                 </tbody>
             </table>
         </div>
+
     </div>
 @endsection

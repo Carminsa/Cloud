@@ -7,6 +7,12 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Nous Rejoindre</div>
                 <div class="panel-body">
+                    @if(\Session::get('message'))
+                        <div class="alert alert-warning fade-in">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <p> {!! \Session::get('message') !!}</p>
+                        </div>
+                    @endif
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/register') }}">
                         {{ csrf_field() }}
 
