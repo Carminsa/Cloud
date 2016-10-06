@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
+//use Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
@@ -83,9 +84,8 @@ class UploadsController extends Controller
             ->where('name', '=', $request->input('name'))
             ->get();
 
-
         $rules = array(
-            'name'       => 'min:3',
+            'name' => 'min:3',
         );
 
         $query = DB::table('uploads')
@@ -118,7 +118,6 @@ class UploadsController extends Controller
         }
     }
 
-
     public function destroy($id)
     {
         DB::table('uploads')
@@ -135,14 +134,26 @@ class UploadsController extends Controller
         $this->file_size = Input::file('file')->getSize();
         $this->file_mime = Input::file('file')->getMimeType();
 
+        $size = DB::table('uploads')
+            ->where('user_id', "=" , Auth::user()->id)
+            ->sum('size');
+
         $query = DB::table('uploads')
             ->where('name', '=', $this->file_name)
             ->get();
 
-        if (count($query) > 0)
+        if ($size > 52428800)
         {
+            Session::flash('error', 'Vous avez dépassé votre limite de 50 Mo, merci de supprimer des fichiers pour libérer de l\'espace où passer votre compte en preniums pour 12€ par mois' );
+        }
+
+        if (count($query) > 0) {
             Session::flash('error', 'Un fichier du même nom existe déjà');
-            return redirect()->action('HomeController@index');
+//            return redirect()->action('HomeController@index');
+        }
+        if ($this->file_size >= 10000000){
+            Session::flash('error', 'Fichier trop lourd');
+
         }else{
             $this->file_path = Input::file('file')->move($this->path . '/public/upload/' . Auth::user()->id, $this->file_name);
             $this->file_path = $this->file_path->getRealPath();
@@ -157,7 +168,7 @@ class UploadsController extends Controller
                 ]);
 
             Session::flash('message', 'Fichier(s) bien uploadé(s)');
-            return redirect()->action('HomeController@index');
+//            return redirect()->action('HomeController@index');
 
         }
     }

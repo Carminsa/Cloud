@@ -372,7 +372,11 @@
       sendingmultiple: noop,
       success: function(file) {
         if (file.previewElement) {
+          setTimeout(function(){// wait for 5 secs(2)
+            location.reload(); // then reload the page.(3)
+          }, 1000);
           return file.previewElement.classList.add("dz-success");
+
         }
       },
       successmultiple: noop,

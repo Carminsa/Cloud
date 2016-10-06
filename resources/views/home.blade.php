@@ -21,8 +21,10 @@
 
                     <div class="panel-heading ">
                         <h4 class="col-md-offset-4">Uploader vos fichiers</h4>
+
                     </div>
                     <div class="panel-body">
+                        <p id="send"> Envoyer plusieurs Fichier (tous formats | max. 10 Mo) :</p>
                         <form class="form-horizontal dropzone" role="form" method="POST" enctype="multipart/form-data" action="{{ url('/uploads') }}">
                             {{ csrf_field() }}
 
