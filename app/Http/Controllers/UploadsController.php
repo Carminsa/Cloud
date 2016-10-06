@@ -14,7 +14,6 @@ use App\Http\Requests;
 
 class UploadsController extends Controller
 {
-
     private $path;
     private $folder_exist;
     private $file_name;
@@ -26,6 +25,15 @@ class UploadsController extends Controller
     {
         $this->path = base_path();
         $this->folder_exist = $this->path . '/public/upload/';
+    }
+
+    public function list_public()
+    {
+        $query = DB::table('uploads')
+            ->where('private', '=', 1 )
+            ->get();
+
+        return view('uploads/list_public', ['upload' => $query]);
     }
 
     public function index()
@@ -55,10 +63,9 @@ class UploadsController extends Controller
         }
     }
 
-
     public function show($id)
     {
-
+        //
     }
 
     public function edit($id)
@@ -142,34 +149,34 @@ class UploadsController extends Controller
             ->where('name', '=', $this->file_name)
             ->get();
 
-        if ($size > 52428800)
-        {
-            Session::flash('error', 'Vous avez dépassé votre limite de 50 Mo, merci de supprimer des fichiers pour libérer de l\'espace où passer votre compte en preniums pour 12€ par mois' );
-        }
+        if ($size < 52428800) {
+            if (count($query) <= 0) {
+                if ($this->file_size <= 10000000)
+                {
+                    $this->file_path = Input::file('file')->move($this->path . '/public/upload/' . Auth::user()->id, $this->file_name);
+                    $this->file_path = $this->file_path->getRealPath();
 
-        if (count($query) > 0) {
-            Session::flash('error', 'Un fichier du même nom existe déjà');
-//            return redirect()->action('HomeController@index');
-        }
-        if ($this->file_size >= 10000000){
-            Session::flash('error', 'Fichier trop lourd');
+                    DB::table('uploads')
+                        ->insert([
+                            'name' => $this->file_name,
+                            'size' => $this->file_size,
+                            'path' => $this->file_path,
+                            'mime' => $this->file_mime,
+                            'user_id' => Auth::user()->id
+                        ]);
+                    Session::flash('message', 'Fichier bien uplodé');
 
-        }else{
-            $this->file_path = Input::file('file')->move($this->path . '/public/upload/' . Auth::user()->id, $this->file_name);
-            $this->file_path = $this->file_path->getRealPath();
-
-            DB::table('uploads')
-                ->insert([
-                    'name' => $this->file_name,
-                    'size' => $this->file_size,
-                    'path' => $this->file_path,
-                    'mime' => $this->file_mime,
-                    'user_id' => Auth::user()->id
-                ]);
-
-            Session::flash('message', 'Fichier(s) bien uploadé(s)');
-//            return redirect()->action('HomeController@index');
-
+                }else {
+                    Session::flash('error', 'Fichier trop lourd');
+                }
+            }else {
+                Session::flash('error', 'Un fichier du même nom existe déjà');
+            }
+        }else {
+            Session::flash('error', 'Vous avez dépassé votre limite de 50 Mo, merci de supprimer des fichiers pour libérer de l\'espace où passer votre compte en preniums pour 12€ par mois');
         }
     }
+
+
 }
+

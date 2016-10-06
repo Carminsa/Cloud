@@ -19,5 +19,6 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 
+Route::get('uploads/list_public', 'UploadsController@list_public');
 Route::resource('uploads', 'UploadsController');
 

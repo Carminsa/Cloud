@@ -75,6 +75,17 @@
                                         {{ csrf_field() }}
                                     </form>
                                 </li>
+                                <li>
+                                    <a href="{{ url('/uploads/list_public' ) }}"
+                                       onclick="event.preventDefault();
+                                                 document.getElementById('all-form').submit();">
+                                        Uploads Public
+                                    </a>
+
+                                    <form id="all-form" action="{{ url('/uploads/list_public') }}" method="get" style="display: none;">
+                                        {{ csrf_field() }}
+                                    </form>
+                                </li>
                             </ul>
                         </li>
                         <li class="dropdown">
