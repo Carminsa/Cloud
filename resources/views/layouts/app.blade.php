@@ -143,7 +143,7 @@
                                 <a href="{{ url('/logout') }}"
                                    onclick="event.preventDefault();
                                                  document.getElementById('logout-form').submit();">
-                                    Logout
+                                    Déconnexion
                                 </a>
 
                                 <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
@@ -151,6 +151,15 @@
                                 </form>
                             </li>
                         </ul>
+                    </li>
+                    <li class="dropdown">
+                    <a href="{{ url('contact/create') }}" onclick="event.preventDefault();
+                                                 document.getElementById('contact').submit();">
+                        Contact
+                    </a>
+                    <form id="contact" action="{{ url('contact/create') }}" method="get" style="display: none;">
+                        {{ csrf_field() }}
+                    </form>
                     </li>
                 @else
                     <li class="dropdown">
@@ -195,13 +204,20 @@
                                 <a href="{{ url('/logout') }}"
                                    onclick="event.preventDefault();
                                                  document.getElementById('logout-form').submit();">
-                                    Logout
+                                    Déconnexion
                                 </a>
 
                                 <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
                                     {{ csrf_field() }}
                                 </form>
                             </li>
+                            <a href="{{ url('contact/create') }}"  onclick="event.preventDefault();
+                                                 document.getElementById('contact').submit();">
+                                Contact
+                            </a>
+                            <form id="contact" action="{{ url('contact/create') }}" method="get" style="display: none;">
+                                {{ csrf_field() }}
+                            </form>
                         </ul>
                     </li>
                 @endif
