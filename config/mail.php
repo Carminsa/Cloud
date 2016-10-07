@@ -57,7 +57,7 @@ return [
 
     'from' => [
         'address' => 'leborges.g@gmail.com',
-        'name' => 'Freeads',
+        'name' => 'Admin',
     ],
 
     /*

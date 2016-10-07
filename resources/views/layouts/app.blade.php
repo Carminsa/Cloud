@@ -153,11 +153,11 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                    <a href="{{ url('contact/create') }}" onclick="event.preventDefault();
+                    <a href="{{ url('/contact/create') }}" onclick="event.preventDefault();
                                                  document.getElementById('contact').submit();">
                         Contact
                     </a>
-                    <form id="contact" action="{{ url('contact/create') }}" method="get" style="display: none;">
+                    <form id="contact" action="{{ url('/contact/create') }}" method="get" style="display: none;">
                         {{ csrf_field() }}
                     </form>
                     </li>

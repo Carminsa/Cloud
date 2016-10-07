@@ -18,12 +18,6 @@ use App\Http\Requests;
 class ContactController extends Controller
 {
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
     private $email;
     private $mailer;
 
@@ -32,106 +26,85 @@ class ContactController extends Controller
         $this->mailer = $mailer;
     }
 
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('contact/create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        $rules = array(
-            'object' => 'min:3|required',
-            'content' => 'min:1|required',
-        );
 
-        $emails = [];
-        $admin = DB::table('users')
-            ->select('email')
-            ->where('admin' ,'=' , 1)
+        $end_world="";
+        $timer = DB::table('contact')
+            ->where('user_id', '=' , Auth::user()->id)
+            ->orderBy('date', 'DESC')
+            ->first();
+
+       if (isset($timer->date))
+       {
+          $end_world = $timer->date;
+       }else {
+           $end_world = "2000-10-07 16:51:32";
+       }
+
+        $date = date('Y-m-d H:i:s', strtotime('-1 hour'));
+        $bool = $date < $end_world;
+
+        $number = DB::table('contact')
+            ->where('date', '>', $date)
+            ->where('user_id', '=', Auth::user()->id)
             ->get();
 
-        foreach ($admin as $value)
-        {
-            array_push($emails, $value->email);
-        }
-        $this->email = $emails;
+        $count = count($number);
 
-        $validator = Validator::make(Input::all(), $rules);
+        if ($bool && $count >= 2) {
 
-        if ($validator->fails())
-        {
-            return Redirect::to('contact/create')
-                ->withErrors($validator);
-        }else {
-
-                   DB::table('contact')
-            ->insert(['object' => $request->input('object'),
-                'content' => $request->input('content'),
-                'user_id' => Auth::user()->id
-            ]);
-            Session::flash('message',  'Message envoyé');
+            Session::flash('error', 'Vous ne pouvez qu\'envoyer que 2 emails 
+                toutes les heures, merci de patienter');
             return Redirect::to('contact/create');
         }
-    }
+        else {
+            $rules = array(
+                'object' => 'min:3|required',
+                'content' => 'min:1|required',
+            );
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+            $emails = [];
+            $admin = DB::table('users')
+                ->select('email')
+                ->where('admin' ,'=' , 1)
+                ->get();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+            foreach ($admin as $value)
+            {
+                array_push($emails, $value->email);
+            }
+            $this->email = $emails;
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+            $validator = Validator::make(Input::all(), $rules);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+            if ($validator->fails())
+            {
+                return Redirect::to('contact/create')
+                    ->withErrors($validator);
+            }else {
+
+                $object = $request->input('object');
+                $content = $request->input('content');
+
+                Mail::raw($content, function ($message) use ($object) {
+                    $message->from(Auth::user()->email);
+                    $message->to($this->email)->subject('Un Utilisateur vient de vous contacter - ' . $object);
+                });
+
+                DB::table('contact')
+                    ->insert(['object' => $request->input('object'),
+                        'content' => $request->input('content'),
+                        'user_id' => Auth::user()->id
+                    ]);
+                Session::flash('message', 'Message envoyé');
+                return Redirect::to('contact/create');
+            }
+        }
     }
 }
