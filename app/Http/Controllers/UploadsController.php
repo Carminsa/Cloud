@@ -83,6 +83,8 @@ class UploadsController extends Controller
         }
     }
 
+
+
     public function update(Request $request, $id)
     {
         $unique_name = DB::table('uploads')

@@ -17,6 +17,7 @@ Route::get('/', function () {
 
 Route::group(['middleware' => 'App\Http\Middleware\Admin'], function()
 {
+    Route::get  ('admin/{admin}/edit_file', 'AdminController@edit_file');
     Route::post('admin/{admin}/update_user', 'AdminController@update_user');
     Route::get('admin/users', 'AdminController@users');
     Route::get('admin/files', 'AdminController@files');

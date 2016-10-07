@@ -32,27 +32,7 @@
                         <td><?= htmlspecialchars($users->birthdate); ?></td>
 
                         <td class="actions">
-                            <?php if($users->active == 1){  ?>
-                            <a href="{{ url('/destroy/' . $users->id) }}"
-                               onclick="event.preventDefault();
-                                document.getElementById('destroy.admin').submit();">
-                                <form id="destroy.admin" action="{{ url('/admin/' . $users->id) }}" role="form" method="POST" style="display: none;">
-                                    {{ csrf_field() }}
-                                    {{ method_field('DELETE') }}
-                                </form>
-                                Désactiver
-                            </a>
-                            <?php } else { ?>
-                            <a href="{{ url('/update/' . $users->id) }}"
-                               onclick="event.preventDefault();
-                                document.getElementById('enable.admin').submit();">
-                                <form id="enable.admin" action="{{ url('/admin/' . $users->id) }}" role="form" method="POST" style="display: none;">
-                                    {{ csrf_field() }}
-                                    <input type="hidden" name="_method" value="put" />
-                                </form>
-                                Réactiver
-                            </a>
-                            <?php } ?>
+
                             <a href="{{ url('/admin/' . $users->id . '/edit') }}">Modifier</a>
                             <a href="{{ url('/admin/' . $users->id) }}">Voir</a>
                         </td>

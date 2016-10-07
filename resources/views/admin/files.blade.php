@@ -11,6 +11,7 @@
                 <thead>
                 <tr>
                     <th scope="row">#</th>
+                    <th scope="row">De</th>
                     <th scope="row">Nom</th>
                     <th class="spacing" scope="row">Taille</th>
                     <th scope="row">Path</th>
@@ -24,6 +25,7 @@
                 @foreach($upload as $uploads)
                     <tr>
                         <td><?= htmlspecialchars($uploads->id_upload) ?></td>
+                        <td><?= htmlspecialchars($uploads->username); ?></td>
                         <td><?= htmlspecialchars($uploads->name); ?></td>
                         <td><?= htmlspecialchars($uploads->size); ?> <span>Ko</span> </td>
                         <td class="spacing"><?= htmlspecialchars($uploads->path); ?></td>
@@ -31,7 +33,7 @@
                         <td><?= htmlspecialchars($uploads->mime); ?></td>
                         <td><?= htmlspecialchars($uploads->date); ?></td>
                         <td class="actions">
-                            <a href="{{ url('/admin/' . $uploads->id_upload . '/edit') }}">Modifier</a>
+                            <a href="{{ url('/admin/' . $uploads->id_upload . '/edit_file') }}">Modifier</a>
                             <a href="">Voir</a>
                         </td>
                     </tr>

@@ -51,7 +51,7 @@ class AdminController extends Controller
             return Redirect::to('admin/' . $id . '/edit')
                 ->withErrors($validator);
         }else
-            {
+        {
             $query = DB::table('users')->where('id', '=', $id);
 
             if (!empty($request->input('username'))) {
@@ -107,6 +107,26 @@ class AdminController extends Controller
         return redirect()->action('AdminController@index');
     }
 
+    public function edit_file($id)
+    {
+        $user = DB::table('uploads')
+            ->join('users', 'users.id' , '=' , 'user_id')
+            ->where('id_upload', '=' , $id)
+            ->first();
+
+       $query = DB::table('uploads')
+           ->where('id_upload', '=', $id)
+           ->first();
+
+        return view('admin/edit_file', ['uploads' => $query , 'user' => $user]);
+    }
+
+    public function update_file(Request $request, $id)
+    {
+
+    }
+
+
     public function destroy($id)
     {
         DB::table('users')
@@ -127,6 +147,7 @@ class AdminController extends Controller
     public function files()
     {
         $query =DB::table('uploads')
+            ->join('users', 'users.id', '=' , 'user_id')
             ->paginate(10);
 
         return view('admin/files', ['upload' => $query]);
