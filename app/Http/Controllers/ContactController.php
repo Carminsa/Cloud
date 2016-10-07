@@ -44,11 +44,16 @@ class ContactController extends Controller
        {
           $end_world = $timer->date;
        }else {
-           $end_world = "2000-10-07 16:51:32";
+           $end_world = "2500-10-07 16:51:32";
        }
 
-        $date = date('Y-m-d H:i:s', strtotime('-1 hour'));
+        $date = date('Y-m-d H:i:s', strtotime('+1 hour'));
         $bool = $date < $end_world;
+
+//        var_dump($date);
+//        var_dump($end_world);
+//        var_dump($bool);
+//        die;
 
         $number = DB::table('contact')
             ->where('date', '>', $date)

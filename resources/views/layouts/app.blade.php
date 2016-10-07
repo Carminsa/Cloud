@@ -118,6 +118,45 @@
                                     {{ csrf_field() }}
                                 </form>
                             </li>
+
+                            <li>
+                                <a href="{{ url('/uploads/' . Auth::user()->id ) }}"
+                                   onclick="event.preventDefault();
+                                                 document.getElementById('see_img').submit();">
+                                    Mes Images
+                                </a>
+
+                                <form id="see_img" action="{{ url('/uploads/' . Auth::user()->id) }}" method="get" style="display: none;">
+                                    {{ csrf_field() }}
+                                </form>
+                            </li>
+
+                            <li>
+                                <a href="{{ url('/uploads/movies/' . Auth::user()->id ) }}"
+                                   onclick="event.preventDefault();
+                                                 document.getElementById('movies').submit();">
+                                    Mes Vidéos
+                                </a>
+
+                                <form id="movies" action="{{ url('/uploads/movies/' . Auth::user()->id) }}" method="get" style="display: none;">
+                                    {{ csrf_field() }}
+                                </form>
+                            </li>
+
+                            <li>
+                                <a href="{{ url('/uploads/musics/' . Auth::user()->id ) }}"
+                                   onclick="event.preventDefault();
+                                                 document.getElementById('musics').submit();">
+                                    Mes Musiques
+                                </a>
+
+                                <form id="musics" action="{{ url('/uploads/musics/' . Auth::user()->id) }}" method="get" style="display: none;">
+                                    {{ csrf_field() }}
+                                </form>
+                            </li>
+
+
+
                             <li>
                                 <a href="{{ url('/uploads/list_public' ) }}"
                                    onclick="event.preventDefault();
@@ -179,6 +218,19 @@
                                     {{ csrf_field() }}
                                 </form>
                             </li>
+
+                            <li>
+                                <a href="{{ url('/uploads/img' ) }}"
+                                   onclick="event.preventDefault();
+                                                 document.getElementById('see_img').submit();">
+                                    Mes Images
+                                </a>
+
+                                <form id="see_img" action="{{ url('/uploads/img') }}" method="get" style="display: none;">
+                                    {{ csrf_field() }}
+                                </form>
+                            </li>
+
                             <li>
                                 <a href="{{ url('/uploads/list_public' ) }}"
                                    onclick="event.preventDefault();

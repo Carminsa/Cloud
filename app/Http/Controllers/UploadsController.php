@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Session;
+use Response;
 use App\Http\Requests;
 
 class UploadsController extends Controller
@@ -23,8 +24,8 @@ class UploadsController extends Controller
 
     public function __construct()
     {
-        $this->path = base_path();
-        $this->folder_exist = $this->path . '/public/upload/';
+        $this->path = storage_path();
+        $this->folder_exist = $this->path . '/upload/';
     }
 
     public function list_public()
@@ -55,7 +56,7 @@ class UploadsController extends Controller
     {
         if (!file_exists($this->folder_exist . Auth::user()->id))
         {
-            mkdir($this->path . '/public/upload/' . Auth::user()->id, 0777);
+            mkdir($this->path . '/upload/' . Auth::user()->id, 0777);
             return $this->upload();
 
         }else{
@@ -63,9 +64,42 @@ class UploadsController extends Controller
         }
     }
 
-    public function show($id)
+    public function show($id = null)
     {
-        //
+        $query = DB::table('uploads')
+            ->where('mime', '=' , 'image/jpeg')
+            ->where('user_id', '=' , $id)
+            ->get();
+
+        return view('uploads/show', ['pics' => $query]);
+    }
+
+    public function movies($id = null)
+    {
+        $query = DB::table('uploads')
+            ->where('mime', '=' , 'video/mp4')
+            ->where('user_id', '=' , $id)
+            ->get();
+
+        return view('uploads/movies', ['pics' => $query]);
+    }
+
+    public function musics($id = null)
+    {
+        $query = DB::table('uploads')
+            ->where('mime', '=' , 'audio/mpeg')
+            ->where('user_id', '=' , $id)
+            ->get();
+
+        return view('uploads/musics', ['pics' => $query]);
+    }
+
+    public function file($id, $image = null, $name)
+    {
+        $path = storage_path('upload') . '/' . $id . '/' . $image . '/' . $name ;
+        if (file_exists($path)) {
+            return Response::download($path);
+        }
     }
 
     public function edit($id)
@@ -82,8 +116,6 @@ class UploadsController extends Controller
             return view('uploads/edit', ['uploads' => $query]);
         }
     }
-
-
 
     public function update(Request $request, $id)
     {
@@ -134,11 +166,18 @@ class UploadsController extends Controller
             ->where('id_upload', '=' , $id)
             ->first();
 
+        $explode = explode("/", $name->path);
+        $last = end($explode);
+        $slice = array_slice($explode, 1, 2, true);
+        $implode = implode(" ", $slice);
+        $replace = str_replace(" ", "/", $implode);
+        $path = $replace . '/' . $last;
+
         DB::table('uploads')
             ->where('id_upload', '=' , $id)
             ->delete();
 
-        unlink($name->path);
+        unlink(storage_path() . '/upload/' . $path );
         Session::flash('message', 'Fichier Supprimé)');
         return redirect()->action('UploadsController@index');
     }
@@ -148,6 +187,8 @@ class UploadsController extends Controller
         $this->file_name = Input::file('file')->getClientOriginalName();
         $this->file_size = Input::file('file')->getSize();
         $this->file_mime = Input::file('file')->getMimeType();
+
+
 
         $size = DB::table('uploads')
             ->where('user_id', "=" , Auth::user()->id)
@@ -162,8 +203,49 @@ class UploadsController extends Controller
             if (count($query) <= 0) {
                 if ($this->file_size <= 10000000)
                 {
-                    $this->file_path = Input::file('file')->move($this->path . '/public/upload/' . Auth::user()->id, $this->file_name);
-                    $this->file_path = $this->file_path->getRealPath();
+                    if ($this->file_mime == 'image/jpeg')
+                    {
+                        $this->file_path = Input::file('file')->move($this->path . '/upload/' . Auth::user()->id . '/images', $this->file_name);
+                        $this->file_path = $this->file_path->getRealPath();
+                        $explode = explode("/", $this->file_path);
+                        $last = end($explode);
+                        $count = array_slice($explode, -3 , 2, true);
+                        $implode = implode(' ', $count);
+                        $this->file_path = str_replace(" ", "/", $implode);
+                        $this->file_path = 'file/' . $this->file_path . '/' .$last;
+                    }
+                    else if ($this->file_mime == 'video/mp4')
+                    {
+                        $this->file_path = Input::file('file')->move($this->path . '/upload/' . Auth::user()->id . '/movies', $this->file_name);
+                        $this->file_path = $this->file_path->getRealPath();
+                        $explode = explode("/", $this->file_path);
+                        $last = end($explode);
+                        $count = array_slice($explode, -3 , 2, true);
+                        $implode = implode(' ', $count);
+                        $this->file_path = str_replace(" ", "/", $implode);
+                        $this->file_path = 'file/' . $this->file_path . '/' .$last;
+                    }
+                    else if ($this->file_mime == 'audio/mpeg')
+                    {
+                        $this->file_path = Input::file('file')->move($this->path . '/upload/' . Auth::user()->id . '/musics', $this->file_name);
+                        $this->file_path = $this->file_path->getRealPath();
+                        $explode = explode("/", $this->file_path);
+                        $last = end($explode);
+                        $count = array_slice($explode, -3 , 2, true);
+                        $implode = implode(' ', $count);
+                        $this->file_path = str_replace(" ", "/", $implode);
+                        $this->file_path = 'file/' . $this->file_path . '/' .$last;
+                    }
+                    else {
+                        $this->file_path = Input::file('file')->move($this->path . '/upload/' . Auth::user()->id . '/other', $this->file_name);
+                        $this->file_path = $this->file_path->getRealPath();
+                        $explode = explode("/", $this->file_path);
+                        $last = end($explode);
+                        $count = array_slice($explode, -3 , 2, true);
+                        $implode = implode(' ', $count);
+                        $this->file_path = str_replace(" ", "/", $implode);
+                        $this->file_path = 'file/' . $this->file_path . '/' .$last;
+                    }
 
                     DB::table('uploads')
                         ->insert([
@@ -185,6 +267,11 @@ class UploadsController extends Controller
         }else {
             Session::flash('error', 'Vous avez dépassé votre limite de 50 Mo, merci de supprimer des fichiers pour libérer de l\'espace où passer votre compte en premiums pour 12€ par mois');
         }
+    }
+
+    public function img($id, $file)
+    {
+
     }
 
 
