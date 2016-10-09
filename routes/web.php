@@ -27,8 +27,10 @@ Route::group(['middleware' => 'App\Http\Middleware\Admin'], function()
 
 Route::group(['middleware' => 'App\Http\Middleware\User'], function()
 {
-//    Route::get('/uploads/{id}/{file}', 'UploadsController@file');
-// images
+    //Download
+    Route::get('uploads/{id}/{image}/{name}/download', 'UploadsController@download');
+
+    //read file
     Route::get('file/{id}/{image}/{name}', 'UploadsController@file');
 
     //movies
@@ -37,20 +39,11 @@ Route::group(['middleware' => 'App\Http\Middleware\User'], function()
     //sound
     Route::get('uploads/musics/{id}', 'UploadsController@musics');
 
-//    Route::get('movie/{id}/{image}/{name}', 'UploadsController@movie');
-//    Route::get('uploads/{image}', function($image = null)
-//    {
-//        $path = storage_path().'/upload/' . $image . '/images/blur-wallpaper-8.jpg';
-//        if (file_exists($path)) {
-//            return Response::download($path);
-//        }
-//    });
 
     Route::get('/home', 'HomeController@index');
     Route::get('uploads/list_public', 'UploadsController@list_public');
     Route::resource('uploads', 'UploadsController');
     Route::resource('contact', 'ContactController');
-
 
 });
 

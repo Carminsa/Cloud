@@ -23,8 +23,8 @@
                         @endif
 
                         <?php foreach ($pics as $value){ ?>
-                        <audio controls="controls">
                             <div><?= htmlspecialchars($value->name) ?></div>
+                            <audio controls="controls">
                             <source src="<?= url($value->path) ?>" type="audio/mp3" />
 
                         </audio>

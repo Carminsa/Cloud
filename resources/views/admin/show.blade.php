@@ -31,7 +31,7 @@
                         <td><?= htmlspecialchars($uploads->mime); ?></td>
                         <td><?= htmlspecialchars($uploads->date); ?></td>
                         <td class="actions">
-                            <a href="{{ url('/admin/' . $uploads->id_upload . '/edit') }}">Modifier</a>
+                            <a href="{{ url('/uploads/' . $uploads->id_upload . '/edit') }}">Modifier</a>
                             <a href="">Voir</a>
                         </td>
                     </tr>

@@ -28,6 +28,14 @@ class UploadsController extends Controller
         $this->folder_exist = $this->path . '/upload/';
     }
 
+    public function download($id = null, $image = null, $name = null )
+    {
+        $path = storage_path('upload') . '/' . $id . '/' . $image . '/' . $name ;
+        if (file_exists($path)) {
+            return Response::download($path);
+        }
+    }
+
     public function list_public()
     {
         $query = DB::table('uploads')
@@ -203,7 +211,7 @@ class UploadsController extends Controller
             if (count($query) <= 0) {
                 if ($this->file_size <= 10000000)
                 {
-                    if ($this->file_mime == 'image/jpeg')
+                    if ($this->file_mime == 'image/jpeg' || $this->file_mime == 'image/png')
                     {
                         $this->file_path = Input::file('file')->move($this->path . '/upload/' . Auth::user()->id . '/images', $this->file_name);
                         $this->file_path = $this->file_path->getRealPath();
@@ -268,12 +276,5 @@ class UploadsController extends Controller
             Session::flash('error', 'Vous avez dépassé votre limite de 50 Mo, merci de supprimer des fichiers pour libérer de l\'espace où passer votre compte en premiums pour 12€ par mois');
         }
     }
-
-    public function img($id, $file)
-    {
-
-    }
-
-
 }
 

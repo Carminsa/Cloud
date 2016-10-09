@@ -71,6 +71,10 @@
                                 {{ method_field('DELETE') }}
                                 <input type="submit" value="Supprimer" class="btn btn-danger">
                             </form>
+                            <form id="uploads_download" action="{{ url($uploads->path) }}" role="form" method="get">
+                                {{ csrf_field() }}
+                                <input type="submit" value="Télécharger" class="btn btn-danger">
+                            </form>
                         </div>
                     </div>
                 </div>
